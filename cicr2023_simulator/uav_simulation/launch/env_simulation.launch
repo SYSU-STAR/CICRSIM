@@ -1,0 +1,10 @@
+<launch>
+
+<!-- gazebo simulation -->
+  <include file="$(find uav_simulation)/launch/gazebo_simulator.xml">
+
+  </include>
+
+  <node pkg="gazebo_map_generator" name="random_obstacle" type="random_obstacle" output="screen" />  
+
+</launch>

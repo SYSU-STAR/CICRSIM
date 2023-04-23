@@ -25,25 +25,31 @@ git clone git@github.com:SYSU-STAR/CICRSIM.git
 cd ../ 
 catkin_make
 ```
-## 键盘控制节点
+## 键盘控制节点依赖
 For keyboard, you should install ```pygame``` first, by:
 ```
 sudo apt-get install python-pygame
 ```
-在仿真世界加载完成之后再启动键盘控制！！！！！！即先启动launch文件
+## 仿真启动
+请按照以下步骤依次启动仿真，否则可能导致随机地图无法刷新
 ```
 source devel/setup.bash
 
-roslaunch uav_simulation keyboard_control.launch
+roslaunch uav_simulation env_simulation.launch
+```
+等待随机地图环境加载完成后，启动仿真无人机
+```
+source devel/setup.bash
 
-等待仿真加载完成,打开新终端
-
+roslaunch uav_simulation uav_simulation.launch
+```
+最后启动键盘控制节点，控制方式：方向键控制无人机前后左右的速度, W和S控制飞机上下, A和D控制飞机yaw角朝向
+```
 source devel/setup.bash
 
 rosrun uav_simulation keyboard_control.py
-
-控制方式：方向键控制无人机前后左右的速度, W和S控制飞机上下, A和D控制飞机yaw角朝向
 ```
+
 ## Acknowledegments
 We use [RotorS](https://github.com/ethz-asl/rotors_simulator) to generate a quadrotor and odometry information, [apriltag_ros](https://github.com/AprilRobotics/apriltag_ros.git) to detect Apriltags. We really appreciate these open source projects!
 
