@@ -17,6 +17,5 @@
     <arg name="init_z" value="$(arg init_z)" />
   </include>
 
-  <node pkg="gazebo_map_generator" name="random_obstacle" type="random_obstacle" output="screen" />  
 
 </launch>
