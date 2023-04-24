@@ -1543,10 +1543,12 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
+      <static>0</static>
     </model>
     <model name='table'>
-      <static>1</static>
+      <static>0</static>
       <link name='link'>
         <collision name='surface'>
           <pose frame=''>0 0 1 0 -0 0</pose>
@@ -1912,10 +1914,10 @@
         </link>
       </model>
       <model name='static_apriltag_4'>
-        <pose frame=''>5.55 -3.6631 1.2 0 -0 0</pose>
+        <pose frame=''>5.52 -3.6631 1.2 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>5.55 -3.6631 1.2 0 1.57 0</pose>
+          <pose frame=''>5.52 -3.6631 1.2 0 1.57 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -2123,7 +2125,9 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
+      <static>0</static>
     </model>
     <model name='unit_box_0_clone'>
       <pose frame=''>2.73536 0.696671 1.29125 1e-06 1e-06 -0.000151</pose>
@@ -2176,8 +2180,9 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
-      <enable_wind>0</enable_wind>
+      <static>0</static>
     </model>
     <model name='unit_box_0_clone_0'>
       <pose frame=''>3.19842 3.88186 1.29125 -1e-06 -1e-06 -6.4e-05</pose>
@@ -2230,7 +2235,9 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
+      <static>0</static>
     </model>
     <model name='unit_box_0_clone_2'>
       <pose frame=''>-2.37321 3.67984 1.29125 -1e-06 -0 2.9e-05</pose>
@@ -2283,7 +2290,9 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
+      <static>0</static>
     </model>
     <model name='unit_box_0_clone_3'>
       <pose frame=''>8.48134 -3.64115 1.29125 1e-06 2e-06 -8e-05</pose>
@@ -2336,7 +2345,9 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
+      <static>0</static>
     </model>
     <model name='static_apriltag_0'>
       <link name='link'>
@@ -2390,9 +2401,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>1.90787 0.108649 0 0 -0 0</pose>
     </model>
@@ -2448,9 +2460,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>1.36256 0.459264 0 0 -0 0</pose>
     </model>
@@ -2506,9 +2519,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>0.80811 0.829943 0 0 -0 0</pose>
     </model>
@@ -2564,9 +2578,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>3.65849 3.02317 0 0 -0 0</pose>
     </model>
@@ -2622,9 +2637,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>3.93537 3.29316 0 0 -0 0</pose>
     </model>
@@ -2680,9 +2696,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>5.04082 3.71574 0 0 -0 0</pose>
     </model>
@@ -2738,9 +2755,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>3.43144 4.34187 0 0 -0 0</pose>
     </model>
@@ -2796,9 +2814,10 @@
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
+        <gravity>0</gravity>
       </link>
       <pose frame=''>0 -0 0 0 -0 0</pose>
-      <static>1</static>
+      <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>3.12393 4.47604 0 0 -0 0</pose>
     </model>
