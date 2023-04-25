@@ -9,7 +9,7 @@
   <arg name="respawn_gazebo" default="false"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find uav_gazebo)/worlds/random_map_generate.world" />
+    <arg name="world_name" value="$(find uav_gazebo)/worlds/CICR2023.world" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="paused" value="$(arg paused)" />
     <arg name="gui" value="$(arg gui)" />

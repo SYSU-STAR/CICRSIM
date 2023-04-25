@@ -29,7 +29,7 @@ vector<uniform_real_distribution<double>> _rand_y(obs_num,distribution_y);
 vector<uniform_real_distribution<double>> _apriltag_rand_y(apriltag_xf_num,distribution_y);
 vector<uniform_real_distribution<double>> _apriltag_rand_x(apriltag_yf_num,distribution_x);
 vector<double> _x_l = {-3.0, 2.1, 2.1, -5.0, 7,7};
-vector<double> _x_h = {1.5, 4.5, 7.2, -1.2, 10.5};
+vector<double> _x_h = {1.5, 4.5, 7.2, -1.2, 9.5};
 vector<double> _y_l = {0.0, -0.7, 2.8, 2.7, -5.5};
 vector<double> _y_h = {1.8, 1.8, 5.5, 3.8, -3.7};
 vector<double> _apriltag_xf_x = {5.05, -0.62, 5.52, -4.5, -9.5};
