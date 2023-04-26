@@ -30,6 +30,7 @@ For keyboard, you should install ```pygame``` first, by:
 ```
 sudo apt-get install python-pygame
 ```
+将[files](/files)放入工作空间下，如果键盘控制节点无法运行，请检查[files](/files)的位置
 ## 仿真启动
 请按照以下步骤依次启动仿真，否则可能导致随机地图无法刷新
 ```

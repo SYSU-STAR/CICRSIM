@@ -32,17 +32,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
-    <node name="odom_visualization" pkg="odom_visualization" type="odom_visualization" output="screen">
-      <remap from="odom_visualization/odom" to="$(arg odometry_topic)" />
-      <param name="mesh_resource" value="package://odom_visualization/meshes/hummingbird.mesh" />
-      <!-- <param name="mesh_resource" value="package://rotors_description/meshes/ardrone.dae" /> -->
-      <param name="color/r" value="0" />
-      <param name="color/g" value="0" />
-      <param name="color/b" value="1" />
-      <param name="color/a" value="1" />
-      <param name="robot_scale" value="1.0"/>
 
-    </node>
     
 
 
