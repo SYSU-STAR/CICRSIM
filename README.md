@@ -51,7 +51,17 @@ source devel/setup.bash
 rosrun uav_simulation keyboard_control.py
 ```
 
-## Acknowledegments
-We use [RotorS](https://github.com/ethz-asl/rotors_simulator) to generate a quadrotor and odometry information, [apriltag_ros](https://github.com/AprilRobotics/apriltag_ros.git) to detect Apriltags. We really appreciate these open source projects!
+## Known Issues
 
+> 在运行键盘控制程序keyboard_control.py时出现pygame.image.load错误
+
+将keyboard_control.py中load图片的路径改为图片的绝对路径即可。
+
+> 无人机在碰撞到场地道具后出现姿态不稳定的翻转
+
+将无人机降落到地面上再起飞即可恢复正常。
+
+## Acknowledegments
+
+We use [RotorS](https://github.com/ethz-asl/rotors_simulator) to generate a quadrotor and odometry information, [apriltag_ros](https://github.com/AprilRobotics/apriltag_ros.git) to detect Apriltags. We really appreciate these open source projects!
 
