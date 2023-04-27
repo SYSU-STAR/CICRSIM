@@ -3,7 +3,37 @@
 ## 仿真世界加载二维码
 Clone our project and put [apriltag](/apriltag/) in /home/${USER_NAME}/.gazebo/models, so you can see apriltags on the wall in the simulation world.
 
+~~~
+sudo cp -r ./apriltag ~/.gazebo/models
+~~~
+
+Extract the models.zip and copy to /home/${USER_NAME}/.gazebo/models.
+
+~~~
+sudo cp -r ./models/* ~/.gazebo/models
+~~~
+
+## 下载RotorS
+
+~~~
+$ mkdir -p ~/RotorS/src
+$ cd ~/RotorS/src
+$ catkin_init_workspace  # initialize your catkin workspace
+$ wstool init
+$ wget https://raw.githubusercontent.com/ethz-asl/rotors_simulator/master/rotors_hil.rosinstall
+$ wstool merge rotors_hil.rosinstall
+$ wstool update
+~~~
+
+~~~
+$ cd ~/RotorS/
+$ catkin build
+$ echo "source ~/RotorS/devel/setup.bash" >> ~/.bashrc
+$ source ~/.bashrc
+~~~
+
 ## 仿真器相关话题
+
 We provide a basic quadrotor model with a depth camera attached to it. Users can subscribe to odom topic and depth topic published in the simulation. Some topics are as follows:
 ```
 odom_topic: /ardrone/ground_truth/odometry
@@ -28,9 +58,9 @@ catkin_make
 ## 键盘控制节点依赖
 For keyboard, you should install ```pygame``` first, by:
 ```
-sudo apt-get install python-pygame
+pip install python-pygame
 ```
-将[files](/files)放入工作空间下，如果键盘控制节点无法运行，请检查[files](/files)的位置
+将[files](/files)放入工作空间的根目录(和src、build、devel一级)，如果键盘控制节点无法运行，请检查[files](/files)的位置
 ## 仿真启动
 请按照以下步骤依次启动仿真，否则可能导致随机地图无法刷新
 ```
@@ -52,10 +82,6 @@ rosrun uav_simulation keyboard_control.py
 ```
 
 ## Known Issues
-
-> 在运行键盘控制程序keyboard_control.py时出现pygame.image.load错误
-
-将keyboard_control.py中load图片的路径改为图片的绝对路径即可。
 
 > 无人机在碰撞到场地道具后出现姿态不稳定的翻转
 
