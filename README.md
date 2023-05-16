@@ -94,6 +94,19 @@ rosrun uav_simulation referee_system
 
 将电脑网络断开。
 
+## Known Issues
+> 无人机在碰撞到场地道具后出现姿态不稳定的翻转
+
+将无人机降落到地面上再起飞即可恢复正常。
+
+> 如果遇到std成员函数导致的编译问题
+
+将所有CmakeLists.txt中的-std=c++11改为-std=c++17。
+
+> 如果遇到Gazebo打开卡住的问题
+
+将电脑网络断开。
+
 ## Acknowledegments
 
 We use [RotorS](https://github.com/ethz-asl/rotors_simulator) to generate a quadrotor and odometry information, [apriltag_ros](https://github.com/AprilRobotics/apriltag_ros.git) to detect Apriltags. We really appreciate these open source projects!
