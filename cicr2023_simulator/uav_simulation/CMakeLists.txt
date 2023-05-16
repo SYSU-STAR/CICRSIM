@@ -19,8 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES exploration_manager
-#  CATKIN_DEPENDS plan_env path_searching bspline bspline_opt active_perception traj_utils lkh_tsp_solver plan_manage
+#  LIBRARIES 
+#  CATKIN_DEPENDS 
 #  DEPENDS system_lib
 )
 
@@ -31,9 +31,18 @@ include_directories(
   ${EIGEN3_INCLUDE_DIR}
 )
 
+add_executable (referee_system src/referee_system.cpp )
+target_link_libraries(referee_system
+${catkin_LIBRARIES})
+
+add_executable (detect_sim src/detect_sim.cpp )
+target_link_libraries(detect_sim
+${catkin_LIBRARIES})
+
 
 
 catkin_install_python(PROGRAMS
   src/keyboard_control.py
+  src/command_process.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

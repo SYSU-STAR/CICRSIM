@@ -8,6 +8,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 from gazebo_msgs.msg import ModelState
 from gazebo_msgs.srv import GetModelState
+from geometry_msgs.msg import TwistStamped
 import numpy as np
 import math
 import tf.transformations as tft
@@ -19,14 +20,14 @@ def main():
     window_size = Rect(0, 0, 750, 272)
     screen = pygame.display.set_mode(window_size.size)
     img = pygame.image.load("./files/keyboard_control.png")
-    key_pub = rospy.Publisher('/gazebo/set_model_state', ModelState, queue_size=10)
+    model_vel_pub = rospy.Publisher('/position_control',TwistStamped,queue_size=10)
     get_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 
-    rate = rospy.Rate(50)
 
     body_pose_msg = ModelState() #uav body pose
     last_body_pose_msg = ModelState() #
     pub_pose_msg = ModelState()
+    pose_control = TwistStamped()
     pub_pose_msg.model_name = 'ardrone'
     pub_pose_msg.reference_frame = 'world'
     while not rospy.is_shutdown():
@@ -34,7 +35,6 @@ def main():
         screen.blit(img, (1,1))
         pygame.display.flip()
         drone_state = get_model_state('ardrone','world')
-        rospy.loginfo("Robot position: x=%f, y=%f, z=%f" % (drone_state.pose.position.x, drone_state.pose.position.y, drone_state.pose.position.z))
         for event in pygame.event.get():
             if event.type == KEYDOWN: 
 
@@ -46,6 +46,7 @@ def main():
                     key_axes[2] = 1
                 if event.key == pygame.K_RIGHT:
                     key_axes[3] = 1
+
                 if event.key == pygame.K_w:
                     key_axes[4] = 1
                 if event.key == pygame.K_s:
@@ -55,25 +56,36 @@ def main():
                 if event.key == pygame.K_d:
                     key_axes[7] = 1
 
-
+            # when keyup, reset velcity
             elif event.type == pygame.KEYUP:
+
                 if event.key == pygame.K_UP:
+
                     key_axes[0] = 0
                 if event.key == pygame.K_DOWN:
+
                     key_axes[1] = 0
                 if event.key == pygame.K_LEFT:
+
                     key_axes[2] = 0
                 if event.key == pygame.K_RIGHT:
+
                     key_axes[3] = 0
+
                 if event.key == pygame.K_w:
+
                     key_axes[4] = 0
                 if event.key == pygame.K_s:
+
                     key_axes[5] = 0
                 if event.key == pygame.K_a:
+
                     key_axes[6] = 0
                 if event.key == pygame.K_d:
+
                     key_axes[7] = 0
 
+        ######
         if(key_axes[0]==1 and key_axes[1]==0):
             body_pose_msg.twist.linear.x = 1
             last_body_pose_msg.twist.linear.x = body_pose_msg.twist.linear.x
@@ -128,37 +140,25 @@ def main():
         
         # orientation ---> euler
         quaternion_uav = (drone_state.pose.orientation.w, drone_state.pose.orientation.x, drone_state.pose.orientation.y, drone_state.pose.orientation.z)
-        euler_angles = tft.euler_from_quaternion(quaternion_uav, 'sxyz') # y
+        euler_angles = tft.euler_from_quaternion(quaternion_uav, 'sxyz') # yaw
         if(euler_angles[0]>=0):
             uav_yaw = math.pi - euler_angles[0]
         if(euler_angles[0]<0):
             uav_yaw = -math.pi - euler_angles[0]
+
         # body ---> world
         rotation_matrix_z = np.matrix([[math.cos(uav_yaw),-math.sin(uav_yaw),0],[math.sin(uav_yaw),math.cos(uav_yaw),0],[0,0,1]])
-        rotation_matrix_z_inv = np.linalg.inv(rotation_matrix_z)
         body_vel_matrix = np.matrix([last_body_pose_msg.twist.linear.x, last_body_pose_msg.twist.linear.y, last_body_pose_msg.twist.linear.z])
         body_vel_matrix_trans = body_vel_matrix.T
         world_vel_matrix = rotation_matrix_z.dot(body_vel_matrix_trans)
 
+        #######################################################
+        pose_control.twist.linear.x = world_vel_matrix[0]
+        pose_control.twist.linear.y = world_vel_matrix[1]
+        pose_control.twist.linear.z = world_vel_matrix[2]
+        pose_control.twist.angular.z = last_body_pose_msg.twist.angular.z
+        model_vel_pub.publish(pose_control)
 
-        pub_pose_msg.pose.position.x = drone_state.pose.position.x
-        pub_pose_msg.pose.position.y = drone_state.pose.position.y
-        pub_pose_msg.pose.position.z = drone_state.pose.position.z
-
-        pub_pose_msg.pose.orientation.w = drone_state.pose.orientation.w
-        pub_pose_msg.pose.orientation.x = drone_state.pose.orientation.x
-        pub_pose_msg.pose.orientation.y = drone_state.pose.orientation.y
-        pub_pose_msg.pose.orientation.z = drone_state.pose.orientation.z
-
-        pub_pose_msg.twist.linear.x = world_vel_matrix[0]
-        pub_pose_msg.twist.linear.y = world_vel_matrix[1]
-        pub_pose_msg.twist.linear.z = world_vel_matrix[2]
-
-        pub_pose_msg.twist.angular.x = drone_state.twist.angular.x
-        pub_pose_msg.twist.angular.y = drone_state.twist.angular.y
-        pub_pose_msg.twist.angular.z = last_body_pose_msg.twist.angular.z
-
-        key_pub.publish(pub_pose_msg)
     
 
 
@@ -171,4 +171,4 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         pass
 
-#######################################################
+
