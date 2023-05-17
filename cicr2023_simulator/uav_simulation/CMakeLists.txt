@@ -14,13 +14,14 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   tf
+  referee_msgs
 )
 
 
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES 
-#  CATKIN_DEPENDS 
+#  LIBRARIES exploration_manager
+#  CATKIN_DEPENDS plan_env path_searching bspline bspline_opt active_perception traj_utils lkh_tsp_solver plan_manage
 #  DEPENDS system_lib
 )
 
@@ -38,8 +39,6 @@ ${catkin_LIBRARIES})
 add_executable (detect_sim src/detect_sim.cpp )
 target_link_libraries(detect_sim
 ${catkin_LIBRARIES})
-
-
 
 catkin_install_python(PROGRAMS
   src/keyboard_control.py
