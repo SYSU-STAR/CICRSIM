@@ -24,5 +24,4 @@
   <depend>geometry_msgs</depend>
   <depend>message_generation</depend>
   <depend>message_runtime</depend>
-  <depend>octomap_msgs</depend>
 </package>

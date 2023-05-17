@@ -39,10 +39,10 @@ else()
   set(BUILD_MAVLINK_INTERFACE_PLUGIN FALSE)
 endif()
 
-if(NOT DEFINED BUILD_OCTOMAP_PLUGIN)
-  message(STATUS "BUILD_OCTOMAP_PLUGIN variable not provided, setting to FALSE.")
-  set(BUILD_OCTOMAP_PLUGIN FALSE)
-endif()
+# if(NOT DEFINED BUILD_OCTOMAP_PLUGIN)
+#   message(STATUS "BUILD_OCTOMAP_PLUGIN variable not provided, setting to FALSE.")
+#   set(BUILD_OCTOMAP_PLUGIN FALSE)
+# endif()
 
 if(NOT DEFINED BUILD_OPTICAL_FLOW_PLUGIN)
   message(STATUS "BUILD_OPTICAL_FLOW_PLUGIN variable not provided, setting to FALSE.")
@@ -72,11 +72,11 @@ set(targets_to_install "")
 
 message(STATUS "ADDITIONAL_INCLUDE_DIRS = ${ADDITIONAL_INCLUDE_DIRS}")
 
-if(BUILD_OCTOMAP_PLUGIN)
-  message(STATUS "BUILD_OCTOMAP_PLUGIN = TRUE, building gazebo_octomap_plugin.")
-else ()
-  message(STATUS "BUILD_OCTOMAP_PLUGIN = FALSE, NOT building gazebo_octomap_plugin.")
-endif ()
+# if(BUILD_OCTOMAP_PLUGIN)
+#   message(STATUS "BUILD_OCTOMAP_PLUGIN = TRUE, building gazebo_octomap_plugin.")
+# else ()
+#   message(STATUS "BUILD_OCTOMAP_PLUGIN = FALSE, NOT building gazebo_octomap_plugin.")
+# endif ()
 
 if(BUILD_OPTICAL_FLOW_PLUGIN)
   message(STATUS "BUILD_OPTICAL_FLOW_PLUGIN = TRUE, building gazebo_optical_flow_plugin.")
@@ -108,12 +108,12 @@ if (NOT NO_ROS)
     cv_bridge
     geometry_msgs
     mav_msgs
-    octomap_msgs
-    octomap_ros
+    # octomap_msgs
+    # octomap_ros
     rosbag
     roscpp
     rotors_comm
-    rotors_control
+    # rotors_control
     std_srvs
     tf
   )
@@ -229,8 +229,8 @@ if (NOT NO_ROS)
     catkin_package(
       INCLUDE_DIRS include ${Eigen_INCLUDE_DIRS}
       LIBRARIES rotors_gazebo_motor_model rotors_gazebo_controller_interface
-      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs octomap_msgs octomap_ros rosbag roscpp gazebo_plugins rotors_comm rotors_control std_srvs tf
-      DEPENDS Eigen octomap OpenCV
+      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs rosbag roscpp gazebo_plugins rotors_comm std_srvs tf
+      DEPENDS Eigen OpenCV
       #CFG_EXTRAS rotors_gazebo_plugins.cmake
     )
     set(target_linking_LIBRARIES ${catkin_LIBRARIES} ${gazebo_dev_LIBRARIES})
@@ -238,8 +238,8 @@ if (NOT NO_ROS)
     catkin_package(
       INCLUDE_DIRS include ${Eigen_INCLUDE_DIRS}
       LIBRARIES rotors_gazebo_motor_model rotors_gazebo_controller_interface
-      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs octomap_msgs octomap_ros rosbag roscpp gazebo_plugins rotors_comm rotors_control std_srvs tf
-      DEPENDS Eigen octomap OpenCV
+      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs rosbag roscpp gazebo_plugins rotors_comm std_srvs tf
+      DEPENDS Eigen OpenCV
       #CFG_EXTRAS rotors_gazebo_plugins.cmake
     )
     set(target_linking_LIBRARIES ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
@@ -441,15 +441,15 @@ list(APPEND targets_to_install rotors_gazebo_multirotor_base_plugin)
 
 # Conditionally built since it requires Octomap as a dependency
 # ASL uses this, PX4 does not
-if(BUILD_OCTOMAP_PLUGIN)
-  find_package(octomap REQUIRED)
-  add_library(rotors_gazebo_octomap_plugin SHARED src/gazebo_octomap_plugin.cpp)
-  target_link_libraries(rotors_gazebo_octomap_plugin ${target_linking_LIBRARIES} )
-  if (NOT NO_ROS)
-    add_dependencies(rotors_gazebo_octomap_plugin ${catkin_EXPORTED_TARGETS})
-  endif()
-  list(APPEND targets_to_install rotors_gazebo_octomap_plugin)
-endif()
+# if(BUILD_OCTOMAP_PLUGIN)
+#   find_package(octomap REQUIRED)
+#   add_library(rotors_gazebo_octomap_plugin SHARED src/gazebo_octomap_plugin.cpp)
+#   target_link_libraries(rotors_gazebo_octomap_plugin ${target_linking_LIBRARIES} )
+#   if (NOT NO_ROS)
+#     add_dependencies(rotors_gazebo_octomap_plugin ${catkin_EXPORTED_TARGETS})
+#   endif()
+#   list(APPEND targets_to_install rotors_gazebo_octomap_plugin)
+# endif()
 
 #======================================= ODOMETRY PLUGIN ========================================//
 add_library(rotors_gazebo_odometry_plugin SHARED src/gazebo_odometry_plugin.cpp)

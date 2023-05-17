@@ -13,9 +13,12 @@ Extract the models.zip and copy to /home/${USER_NAME}/.gazebo/models.
 sudo cp -r ./models/* ~/.gazebo/models
 ~~~
 
-## 下载RotorS
-Information about downloading RotorS could be found in https://github.com/ethz-asl/rotors_simulator.
-If you're using ubuntu20.04, you may meet "catkin build failed, command not found:catkin", try this to solve:
+## 依赖安装
+以Ubuntu18.04系统为例
+```
+$ sudo apt-get install ros-melodic-mavlink python-wstool python-catkin-tools protobuf-compiler libgoogle-glog-dev ros-melodic-mavros
+```
+如果使用Ubuntu20.04，遇到 "catkin build failed, command not found:catkin"的问题，可以尝试如下方法进行解决:
 ```
 sudo apt-get install python3-catkin-tools
 ```

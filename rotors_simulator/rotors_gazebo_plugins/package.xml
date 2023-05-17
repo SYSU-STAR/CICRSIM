@@ -31,13 +31,12 @@
   <depend>protobuf-dev</depend>
   <depend>mavros</depend>
   <depend>mav_msgs</depend>
-  <depend>octomap_msgs</depend>
+  <!-- <depend>octomap_msgs</depend>
   <depend>octomap_ros</depend>
-  <depend>octomap</depend>
+  <depend>octomap</depend> -->
   <depend>rosbag</depend>
   <depend>roscpp</depend>
   <depend>rotors_comm</depend>
-  <depend>rotors_control</depend>
   <depend>std_srvs</depend>
   <depend>tf</depend>
   <depend>yaml-cpp</depend>

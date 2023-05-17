@@ -22,7 +22,7 @@
   <depend>gazebo_msgs</depend>
   <depend>gazebo_plugins</depend>
   <depend>geometry_msgs</depend>
-  <depend>joy</depend>
+  <!-- <depend>joy</depend> -->
   <depend>mav_msgs</depend>
   <depend>roscpp</depend>
   <depend>rotors_gazebo_plugins</depend>
