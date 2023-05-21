@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="init_x" value="8.5"/>
+  <arg name="init_y" value="4.0"/>
+  <arg name="init_z" value="1.0"/> 
+
+  <node pkg="uav_simulation" name="referee_system" type="referee_system" output="screen" >  
+
+    <param name="init_x" value="$(arg init_x)" />
+    <param name="init_y" value="$(arg init_y)" />
+    <param name="init_z" value="$(arg init_z)" />
+    
+  </node>
+
+</launch>

@@ -1,0 +1,45 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/melodic/include/**",
+        "/home/zhuang/catkin_ws/devel/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/active_perception/include/**",
+        "/home/zhuang/catkin_ws/src/apriltag_ros/apriltag_ros/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/bspline/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/bspline_opt/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/exploration_manager/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/fuae_gazebo/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/utils/lkh_tsp_solver/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/local_sensing/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/Utils/multi_map_server/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/path_searching/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/plan_env/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/plan_manage/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/poly_traj/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/Utils/pose_utils/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/Utils/quadrotor_msgs/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/gazebo_plugins/realsense_gazebo_plugin/include/**",
+        "/home/zhuang/catkin_ws/src/rotors_simulator/rotors_control/include/**",
+        "/home/zhuang/catkin_ws/src/rotors_simulator/rotors_gazebo_plugins/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/utils/sensor_pose_trans/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/so3_control/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/so3_disturbance_generator/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/so3_quadrotor_simulator/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/fuel_planner/traj_utils/include/**",
+        "/home/zhuang/catkin_ws/src/fuae-planner/uav_simulator/Utils/uav_utils/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

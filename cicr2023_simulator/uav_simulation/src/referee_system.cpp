@@ -1,10 +1,10 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <gazebo_msgs/GetModelState.h>
+#include <gazebo_msgs/ModelState.h>
+#include <nav_msgs/Odometry.h>
 #include "referee_msgs/Apriltag_info.h"
 #include <iostream>
-#include <thread>
-#include <chrono>
 using namespace std;
 ros::Subscriber rcv_start_flag, rcv_tag_info;
 ros::ServiceClient client;
@@ -15,6 +15,7 @@ int total_score;
 bool start_flag = false;
 double detect_error = 0.03;//允许的3cm检测误差
 bool finish_detection = false;//如果全部二维码被发现，视为完成探索
+gazebo_msgs::ModelState model_pose, last_model_pose;
 vector<geometry_msgs::PoseStamped>real_apriltag_pose(tags_num);//仿真场景中的二维码位置
 vector<geometry_msgs::PoseStamped>player_apriltag_pose(tags_num);//接收参赛选手发布的二维码位置
 vector<bool>tag_flag = {false,false,false,false,false,false,false,false};//所有二维码默认没有检测到，置为false
@@ -87,7 +88,7 @@ void Score()//评分函数
         total_score=t;
         cout<<"Total Score: "<<total_score<<endl;
         cout<<"Remain Time: "<<minutes<<" min "<<seconds<< " sec"<<endl;
-        this_thread::sleep_for(chrono::seconds(1));
+        ros::Duration(1.0).sleep();
         seconds--;
         if(seconds<0)
         {
@@ -96,16 +97,47 @@ void Score()//评分函数
         }
     }
 }
+void OdomInfo()
+{
+    gazebo_msgs::GetModelState uav;
+    uav.request.model_name = "ardrone";
+    uav.request.relative_entity_name = "world";
+    if(client.call(uav))
+    {
+        model_pose.pose.position.x = uav.response.pose.position.x;
+        model_pose.pose.position.y = uav.response.pose.position.y;
+        model_pose.pose.position.z = uav.response.pose.position.z;
+    }
+}
+void positionCheck(const ros::TimerEvent& event)
+{
+    double distance = sqrt(pow(model_pose.pose.position.x-last_model_pose.pose.position.x,2)+pow(model_pose.pose.position.y-last_model_pose.pose.position.y,2)+pow(model_pose.pose.position.z-last_model_pose.pose.position.z,2));
+    if(distance>8.0)
+    {
+        ROS_INFO("TOO FAST, CHEATING!!!");
+    }
+    last_model_pose.pose.position.x = model_pose.pose.position.x;
+    last_model_pose.pose.position.y = model_pose.pose.position.y;
+    last_model_pose.pose.position.z = model_pose.pose.position.z;
+}
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "referee_system");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh( "~" );
     rcv_start_flag = nh.subscribe("/move_base_simple/goal", 10, Time_Count);
     rcv_tag_info = nh.subscribe("/apriltag_detection", 10, ApriltaginfoCallBack);
+    ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
     client = nh.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
+    ROS_WARN("Referee system Load Sucessfully!");
+    
+    nh.param("init_x", last_model_pose.pose.position.x, 8.5);
+    nh.param("init_y", last_model_pose.pose.position.y, 4.0);
+    nh.param("init_z", last_model_pose.pose.position.z, 0.0);
+    
     ros::Rate rate(200);
     while(ros::ok()&&(minutes>=0&&seconds>=0)&&!finish_detection)
     {
+        OdomInfo();
         ApriltagInfo();
         Score();
         ros::spinOnce();

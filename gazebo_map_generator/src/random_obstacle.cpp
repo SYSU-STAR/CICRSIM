@@ -102,5 +102,6 @@ int main(int argc, char **argv)
    ros::NodeHandle n( "~" );
    client = n.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
    RandomMapGenerate();
+   ROS_WARN("Random Map Load Sucessfully!");
 }
 
