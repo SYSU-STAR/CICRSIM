@@ -28,23 +28,12 @@ cd ../
 catkin_make
 ```
 ## 仿真器设置
+参赛选手根据 [sim_env.sh](/sim_env.sh) 配置仿真环境，脚本中的```catkin_ws```请自行替换为自己的工作空间
+```
+cd CICRSIM/
+./sim_env.sh
+```
 
-将仿真世界中需要加载的模型放入对应路径：
-```
-cd CICRSIM/
-sudo cp -r ./apriltag ~/.gazebo/models
-sudo unzip models.zip -d ~/.gazebo/models
-```
-将 [files](/files) 放入工作空间目录下
-```
-cd CICRSIM/
-sudo cp -r ./files ${YOUR_WORKSPACE_PATH}
-```
-将启动脚本 [start_simulation.sh](/start_simulation.sh) 放在工作空间目录下
-```
-cd CICRSIM/
-sudo cp -r ./start_simulation.sh ${YOUR_WORKSPACE_PATH}
-```
 以上为仿真器的相关依赖安装和环境配置，接下来说明如何使用官方提供的仿真器。
 
 ## 键盘控制节点依赖安装
@@ -123,6 +112,23 @@ model_odom_pub.publish(odom)
 |:-|:-|:-|
 |`/position_control`|`nav_msgs/Odometry`|官方控制接口，可发布无人机的位置、姿态、速度信息来控制无人机|
 
+### 传感器话题获取示例
+下面给出一段示例代码，说明如何获取相机的深度数据：
+```
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
+ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg)
+{
+    // 处理深度图像消息
+}
+ int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "depth_image_subscriber");
+    ros::NodeHandle nh;
+    ros::Subscriber sub = nh.subscribe<sensor_msgs::Image>("/camera/depth/image_raw", 1, depthImageCallback);
+    ros::spin();
+}
+```
 ## 已知问题
 > 无人机在碰撞到场地道具后出现姿态不稳定的翻转
 
