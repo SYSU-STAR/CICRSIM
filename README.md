@@ -12,7 +12,7 @@
 ## 仿真器依赖安装
 以Ubuntu18.04系统为例
 ```
-$ sudo apt-get install ros-melodic-mavlink python-wstool python-catkin-tools protobuf-compiler libgoogle-glog-dev ros-melodic-mavros
+$ sudo apt-get install ros-melodic-mavlink python-wstool python-catkin-tools protobuf-compiler libgoogle-glog-dev ros-melodic-mavros ros-melodic-mav-msgs
 ```
 如果使用Ubuntu20.04，遇到 "catkin build failed, command not found:catkin"的问题，可以尝试如下方法进行解决:
 ```
