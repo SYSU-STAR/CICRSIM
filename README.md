@@ -20,7 +20,7 @@ sudo apt-get install python3-catkin-tools
 ```
 
 ## 仿真器编译
-在安装完相关依赖后，将代码克隆到一个新的工作空间中，并通过catkin_make进行编译:
+在安装完相关依赖后，将代码克隆到一个新的工作空间中，并通过catkin_make进行编译：
 ```
 cd ${YOUR_WORKSPACE_PATH}/src
 git clone git@github.com:SYSU-STAR/CICRSIM.git
@@ -28,7 +28,15 @@ cd ../
 catkin_make
 ```
 ## 仿真器设置
-参赛选手根据 [sim_env.sh](/sim_env.sh) 配置仿真环境，脚本中的```catkin_ws```请自行替换为自己的工作空间
+参赛选手根据 [sim_env.sh](/sim_env.sh) 配置仿真环境，脚本中的```catkin_ws```请自行替换为自己的工作空间名称。例如，对一个名称为```zhangsan_workspace```的工作空间来说，先将 [sim_env.sh](/sim_env.sh) 中的内容替换为如下所示的内容：
+```
+#!/bin/bash
+sudo cp -r ./apriltag ~/.gazebo/models
+sudo unzip ./models.zip -d ~/.gazebo/models
+sudo cp -r ./files ~/zhangsan_workspace
+sudo cp -r ./start_simulation.sh ~/zhangsan_workspace
+```
+接着，在终端中输入如下命令：
 ```
 cd CICRSIM/
 ./sim_env.sh
@@ -46,11 +54,11 @@ sudo install python-pygame
 ```
 pip install pygame
 ```
-如果键盘控制节点无法运行，请检查 [files](/files) 的位置，确保 [files](/files) 被正确放置在```工作空间根目录```中
+如果键盘控制节点无法运行，请检查 [files](/files) 的位置，确保 [files](/files) 被正确放置在```工作空间根目录```中，例如 ```/home/zhangsan/zhangsan_workspace```。
 
 ## 启动仿真
 ### ```仿真界面展示```
-启动仿真前，请确保启动脚本 [start_simulation.sh](/start_simulation.sh) 的位置在工作空间目录下，并按照脚本中的顺序```依次```启动仿真，否则可能导致随机地图无法刷新
+启动仿真前，请确保启动脚本 [start_simulation.sh](/start_simulation.sh) 的位置在工作空间目录下，例如 ```/home/zhangsan/zhangsan_workspace```。```注意```：脚本文件中首先通过 [env_simulation.launch](/cicr2023_simulator/uav_simulation/launch/env_simulation.launch) 加载了```随机地图```，再通过 [uav_simulation.launch](/cicr2023_simulator//uav_simulation/launch/uav_simulation.launch) 加载了```仿真无人机```，请确保二者在脚本中的顺序不被颠倒，否则可能会出现随机地图无法刷新的情况。
 ```
 ./start_simulation.sh
 ```
@@ -69,7 +77,7 @@ pip install pygame
 启动脚本中打开的 [keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py) 为官方提供的键盘控制节点示例，参赛者可参考 [keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py) 中控制无人机的方法，根据官方预留的控制接口发布相关话题来开发自己的无人机控制器，具体实现如下：
 ```
 话题名称：/position_control
-数据类型： Type[Odometry]
+数据类型：nav_msgs/Odometry
 发布示例：model_odom_pub = rospy.Publisher('/position_control',Odometry,queue_size=10)
 ```
 可分别设置无人机的```位置```、```姿态```、```线速度```和```角速度```，示例如下：

@@ -13,14 +13,14 @@ int minutes = 3;
 int seconds = 0; 
 int total_score;
 bool start_flag = false;
-double detect_error = 0.03;//允许的3cm检测误差
-bool finish_detection = false;//如果全部二维码被发现，视为完成探索
+double detect_error = 0.03;//3cm
+bool finish_detection = false;
 gazebo_msgs::ModelState model_pose, last_model_pose;
-vector<geometry_msgs::PoseStamped>real_apriltag_pose(tags_num);//仿真场景中的二维码位置
-vector<geometry_msgs::PoseStamped>player_apriltag_pose(tags_num);//接收参赛选手发布的二维码位置
-vector<bool>tag_flag = {false,false,false,false,false,false,false,false};//所有二维码默认没有检测到，置为false
+vector<geometry_msgs::PoseStamped>real_apriltag_pose(tags_num);
+vector<geometry_msgs::PoseStamped>player_apriltag_pose(tags_num);
+vector<bool>tag_flag = {false,false,false,false,false,false,false,false};
 vector<int>tag_score = {0,0,0,0,0,0,0,0};
-void ApriltagInfo()//获取二维码位置
+void ApriltagInfo()
 {
     vector<gazebo_msgs::GetModelState> apriltag(tags_num);
     vector<string> apriltag_names = {"static_apriltag_0","static_apriltag_1","static_apriltag_2","static_apriltag_3","static_apriltag_4","static_apriltag_5","static_apriltag_6","static_apriltag_7"};
@@ -28,7 +28,7 @@ void ApriltagInfo()//获取二维码位置
     {
         apriltag[i].request.model_name= apriltag_names[i];
         apriltag[i].request.relative_entity_name = "world";
-        // ROS_INFO("Tag_Name: %s Pos_x: %d Pos_y: %d Pos_z: %d",apriltag[i].request.model_name,apriltag[i].response.pose.position.x,apriltag[i].response.pose.position.y,apriltag[i].response.pose.position.z );
+       
         if(client.call(apriltag[i]))
         {
             real_apriltag_pose[i].pose.position.x = apriltag[i].response.pose.position.x;
@@ -37,30 +37,28 @@ void ApriltagInfo()//获取二维码位置
         }
     }
 }
-void Time_Count(const geometry_msgs::PoseStamped& msg)//回调函数，2d nav_goal 触发计时开始
+void Time_Count(const geometry_msgs::PoseStamped& msg)
 {
     start_flag = true;
 }
-void ApriltaginfoCallBack(const referee_msgs::Apriltag_info& msg)//回调函数，订阅参赛选手发布的二维码位置
+void ApriltaginfoCallBack(const referee_msgs::Apriltag_info& msg)
 {
     player_apriltag_pose[msg.tag_num].pose.position.x = msg.tag_pos_x;
     player_apriltag_pose[msg.tag_num].pose.position.y = msg.tag_pos_y;
     player_apriltag_pose[msg.tag_num].pose.position.z = msg.tag_pos_z;
 }
-void Score()//评分函数
+void Score()
 {
-    for(int i=0;i<tags_num;i++)//判断是否检测到了二维码
+    for(int i=0;i<tags_num;i++)
     {
         if(player_apriltag_pose[i].pose.position.x!=0&&player_apriltag_pose[i].pose.position.y!=0&&player_apriltag_pose[i].pose.position.z!=0)
         {
-            // cout<<"TAG "<<i<<" has been detected"<<endl;
             tag_flag[i]=true;
-            // cout<<"_____________________________________________________"<<endl;
         }
     }
     for(int i=0;i<tags_num;i++)
     {
-        if(tag_flag[i])//如果检测到，进行精确度判断
+        if(tag_flag[i])
         {
             double x_err = abs(player_apriltag_pose[i].pose.position.x - real_apriltag_pose[i].pose.position.x);
             double y_err = abs(player_apriltag_pose[i].pose.position.y - real_apriltag_pose[i].pose.position.y);
@@ -75,7 +73,6 @@ void Score()//评分函数
     if(tag_check)
     {
         finish_detection = true;
-        // cout<<"successfully detect all tags"<<endl;
     }
     if(start_flag)
     {

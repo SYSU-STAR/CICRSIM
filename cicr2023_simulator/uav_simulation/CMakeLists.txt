@@ -36,9 +36,6 @@ add_executable (referee_system src/referee_system.cpp )
 target_link_libraries(referee_system
 ${catkin_LIBRARIES})
 
-add_executable (detect_sim src/detect_sim.cpp )
-target_link_libraries(detect_sim
-${catkin_LIBRARIES})
 
 catkin_install_python(PROGRAMS
   src/keyboard_control.py
