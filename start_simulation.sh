@@ -18,6 +18,5 @@ sleep 2s
 gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;rosrun uav_simulation keyboard_control.py;exec bash;"
 sleep 2s
 
-gnome-terminal -t "rviz" -x bash -c "rviz;exec bash;"
 
 
