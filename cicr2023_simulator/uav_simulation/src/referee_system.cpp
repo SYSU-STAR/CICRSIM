@@ -4,6 +4,7 @@
 #include <gazebo_msgs/ModelState.h>
 #include <nav_msgs/Odometry.h>
 #include "referee_msgs/Apriltag_info.h"
+#include <std_msgs/Bool.h>
 #include <iostream>
 using namespace std;
 ros::Subscriber rcv_start_flag, rcv_tag_info;
@@ -28,7 +29,6 @@ void ApriltagInfo()
     {
         apriltag[i].request.model_name= apriltag_names[i];
         apriltag[i].request.relative_entity_name = "world";
-       
         if(client.call(apriltag[i]))
         {
             real_apriltag_pose[i].pose.position.x = apriltag[i].response.pose.position.x;
@@ -37,9 +37,10 @@ void ApriltagInfo()
         }
     }
 }
-void Time_Count(const geometry_msgs::PoseStamped& msg)
+void Time_Count(const std_msgs::Bool::ConstPtr& msg)
 {
-    start_flag = true;
+    if(msg->data)
+        start_flag = true;
 }
 void ApriltaginfoCallBack(const referee_msgs::Apriltag_info& msg)
 {
@@ -121,12 +122,12 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "referee_system");
     ros::NodeHandle nh( "~" );
-    rcv_start_flag = nh.subscribe("/move_base_simple/goal", 10, Time_Count);
+    rcv_start_flag = nh.subscribe("/start_flag", 10, Time_Count);
     rcv_tag_info = nh.subscribe("/apriltag_detection", 10, ApriltaginfoCallBack);
     ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
     client = nh.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
     ROS_WARN("Referee system Load Sucessfully!");
-    
+
     nh.param("init_x", last_model_pose.pose.position.x, 8.5);
     nh.param("init_y", last_model_pose.pose.position.y, 4.0);
     nh.param("init_z", last_model_pose.pose.position.z, 0.0);

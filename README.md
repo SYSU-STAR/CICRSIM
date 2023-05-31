@@ -1,7 +1,6 @@
 # SYSU CICR Simulator
-<!-- 协同智能是当前智能机器人发展的重要方向之一，它弥补了单一机器人在任务执行过程中鲁棒性不足、任务完成度低等问题，正在成为救灾、侦察等任务的有效解决方案。为吸引更多未来AI人才关注参与机器人协同技术发展，中山大学人工智能学院将承办```第一届逸仙勇士杯协同机器人大赛```。 -->
 
-![cicr](/files/cicr.png)
+![cicr](files/cicr.png)
 
 中山大学人工智能学院承办的第一届逸仙勇士杯协同机器人大赛现已启动。本仓库致力于为参与```仿真赛```项目的开发者提供关键仿真环境和代码接口。
 
@@ -14,15 +13,14 @@
 # 1. 安装说明
 
 ## 仿真器依赖安装
-以Ubuntu18.04系统为例
+对于 Ubuntu18.04：
 ```
-$ sudo apt-get install ros-melodic-mavlink python-wstool python-catkin-tools protobuf-compiler libgoogle-glog-dev ros-melodic-mavros ros-melodic-mav-msgs
+$ sudo apt-get install ros-melodic-mavlink python-wstool python-catkin-tools protobuf-compiler libgoogle-glog-dev ros-melodic-mavros ros-melodic-mav-msgs python-pygame
 ```
-如果使用Ubuntu20.04，遇到 "catkin build failed, command not found:catkin"的问题，可以尝试如下方法进行解决:
+对于 Ubuntu20.04：
 ```
-sudo apt-get install python3-catkin-tools
+$ sudo apt-get install ros-noetic-mavlink python3-wstool python3-catkin-tools protobuf-compiler libgoogle-glog-dev ros-noetic-mavros python3-pygame
 ```
-
 ## 仿真器编译
 在安装完相关依赖后，将代码克隆到一个新的工作空间中，并通过catkin_make进行编译：
 ```
@@ -48,22 +46,9 @@ cd CICRSIM/
 
 以上为仿真器的相关依赖安装和环境配置，接下来说明如何使用官方提供的仿真器。
 
-## 键盘控制节点依赖安装
-首先安装 ```pygame```:
-```
-sudo install python-pygame
-```
-对于ubuntu20.04，可以尝试使用如下命令:
-
-```
-pip install pygame
-```
-如果键盘控制节点无法运行，请检查 [files](/files) 的位置，确保 [files](/files) 被正确放置在```工作空间根目录```中，例如 ```/home/zhangsan/zhangsan_workspace```。
-
-
 # 2. 运行仿真
 
-## 仿真界面展示
+## 1. 仿真界面展示
 启动仿真前，请确保启动脚本 [start_simulation.sh](/start_simulation.sh) 的位置在工作空间目录下，例如 ```/home/zhangsan/zhangsan_workspace```。
 
 ```
@@ -75,16 +60,9 @@ pip install pygame
 
 ```注意```：脚本文件中首先通过 [env_simulation.launch](/cicr2023_simulator/uav_simulation/launch/env_simulation.launch) 加载了```随机地图```，再通过 [uav_simulation.launch](/cicr2023_simulator//uav_simulation/launch/uav_simulation.launch) 加载了```仿真无人机```，请确保二者在脚本中的顺序不被颠倒，否则可能会出现随机地图无法刷新的情况。
 
-## 文件说明
+## 2. 文件说明
 
-启动脚本中打开的 [referee_system.launch](/cicr2023_simulator/uav_simulation/launch/referee_system.launch)为官方的打分系统，打分系统的触发方式为在```Rviz```中使用```2D Nav Goal```选取目标点：
-
-![rviz](/files/rviz.png)
-
-此时，打分系统会在终端输出比赛的当前剩余时间和得分：
-
-![referee_system](/files/referee_system.png)
-
+### 2.1 键盘控制节点
 启动脚本中打开的 [keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py) 为官方提供的键盘控制节点示例，参赛者可参考 [keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py) 中控制无人机的方法，根据官方预留的控制接口发布相关话题来开发自己的无人机控制器，具体实现如下：
 ```
 话题名称：/position_control
@@ -112,10 +90,10 @@ odom.twist.twist.angular.z = 1.0
 
 model_odom_pub.publish(odom)
 ```
-启动脚本中打开的 [command_process.py](/cicr2023_simulator/uav_simulation/src/command_process.py) 为控制器话题发布的接收端，用于接收和处理参赛者发布的控制话题。```注意```，该文件```不允许参赛者进行更改```，最终提交的代码中仅允许包含```算法部分```和发布控制指令的```控制器```。
-### ```相关话题说明```
+
+### 2.2 相关话题说明
 仿真无人机上默认搭载了一个RealSense深度相机，参赛选手可获取相机的相关话题以及无人机的里程计、IMU等话题，具体说明如下：
-#### 传感器话题
+#### 2.2.1 传感器话题
 |名称|类型|描述|
 |:-|:-|:-|
 |`/ardrone/ground_truth/odometry`|`nav_msgs/Odometry`|里程计数据，包括无人机的位置、姿态和速度信息|
@@ -127,12 +105,13 @@ model_odom_pub.publish(odom)
 
 若需要修改深度相机相关话题，可在 [_d435.gazebo.xacro](/cicr2023_simulator/uav_gazebo/urdf/_d435.gazebo.xacro)中修改；若需要激光雷达等传感器，请参赛选手自行添加。
 
-#### 控制接口话题
+#### 2.2.2 其他接口话题
 |名称|类型|描述|
 |:-|:-|:-|
 |`/position_control`|`nav_msgs/Odometry`|官方控制接口，可发布无人机的位置、姿态、速度信息来控制无人机|
+|`/start_flag`|`std_msgs/Bool.h`|打分系统接口，发布对应的消息以开始计时与计算选手当前得分
 
-### 传感器话题获取示例
+#### 2.2.3 传感器话题获取示例
 下面给出一段示例代码，说明如何获取相机的深度数据：
 ```
 #include <ros/ros.h>
@@ -149,7 +128,37 @@ model_odom_pub.publish(odom)
     ros::spin();
 }
 ```
-## 已知问题
+
+### 2.3 打分系统
+启动脚本中打开的 [referee_system.launch](/cicr2023_simulator/uav_simulation/launch/referee_system.launch)为官方的打分系统。如果想要开始比赛，参赛选手需要在自己的程序中发布相关话题,话题接口请参考 `2.2.2 其他接口话题`，示例如下：
+```
+#include <ros/ros.h>
+#include <std_msgs/Bool.h>
+ros::Publisher start_flag_pub;
+void startflagPub()
+{
+    std_msgs::Bool my_start_flag;
+    my_start_flag.data = true;
+    start_flag_pub.publish(my_start_flag);
+}
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "detect_sim");
+  ros::NodeHandle nh;
+  start_flag_pub = nh.advertise<std_msgs::Bool>("/start_flag",10);
+  startflagPub();
+}
+```
+比赛开始后，参赛选手的无人机允许离开地面，打分系统会在终端输出比赛的当前剩余时间和得分：
+
+![referee_system](/files/referee_system.png)
+
+### 2.4 控制器话题接收端
+启动脚本中打开的 [command_process.py](/cicr2023_simulator/uav_simulation/src/command_process.py) 为控制器话题发布的接收端，用于接收和处理参赛者发布的控制话题。该文件不允许参赛者进行更改。
+
+# 3. 代码提交说明
+
+# 4. 已知问题
 > 无人机在碰撞到场地道具后出现姿态不稳定的翻转
 
 将无人机降落到地面上再起飞即可恢复正常。
@@ -161,3 +170,7 @@ model_odom_pub.publish(odom)
 > 如果遇到Gazebo打开卡住的问题
 
 将电脑网络断开。
+
+> 键盘控制节点无法运行
+
+请检查 [files](/files) 的位置，确保 [files](/files) 被正确放置在```工作空间根目录```中，例如 ```/home/zhangsan/zhangsan_workspace```
