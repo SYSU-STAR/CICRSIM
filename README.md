@@ -1,13 +1,17 @@
-# CICRSIM Date: 2023.05.30
-协同智能是当前智能机器人发展的重要方向之一，它弥补了单一机器人在任务执行过程中鲁棒性不足、任务完成度低等问题，正在成为救灾、侦察等任务的有效解决方案。为吸引更多未来AI人才关注参与机器人协同技术发展，中山大学人工智能学院将承办```第一届逸仙勇士杯协同机器人大赛```。
+# SYSU CICR Simulator
+<!-- 协同智能是当前智能机器人发展的重要方向之一，它弥补了单一机器人在任务执行过程中鲁棒性不足、任务完成度低等问题，正在成为救灾、侦察等任务的有效解决方案。为吸引更多未来AI人才关注参与机器人协同技术发展，中山大学人工智能学院将承办```第一届逸仙勇士杯协同机器人大赛```。 -->
 
 ![cicr](/files/cicr.png)
 
-本仓库为```仿真赛项目```的```无人机模拟器```，该赛项的主要内容是：复杂场景中存在多个位置未知的目标二维码和随机障碍物，无人机需要通过机载传感器和计算机感知环境和规划运动，尽快搜索到目标二维码并准确报告其位置坐标，发现目标越多，用时越短者获得更高的分数。比赛中，参赛队需要为无人机开发```环境感知```以及```路径规划```算法，控制无人机自主探索未知环境，寻找目标。
+中山大学人工智能学院承办的第一届逸仙勇士杯协同机器人大赛现已启动。本仓库致力于为参与```仿真赛```项目的开发者提供关键仿真环境和代码接口。
+
+仿真赛的主要任务内容是：复杂场景中存在多个位置未知的目标二维码和随机障碍物，无人机需要实时感知环境和规划运动，尽快搜索到目标二维码并准确报告其位置坐标，发现目标越多，用时越短者获得更高的排名。比赛中，参赛队需要为无人机开发```环境感知```以及```路径规划```算法，控制无人机自主探索未知环境，寻找目标。
 
 <p align="center">
   <img src="files/sim.gif">
 </p>
+
+# 1. 安装说明
 
 ## 仿真器依赖安装
 以Ubuntu18.04系统为例
@@ -28,7 +32,7 @@ cd ../
 catkin_make
 ```
 ## 仿真器设置
-参赛选手根据 [sim_env.sh](/sim_env.sh) 配置仿真环境，脚本中的```catkin_ws```请自行替换为自己的工作空间名称。例如，对一个名称为```zhangsan_workspace```的工作空间来说，先将 [sim_env.sh](/sim_env.sh) 中的内容替换为如下所示的内容：
+参赛选手根据 [sim_env.sh](/sim_env.sh) 配置仿真环境，脚本中的```catkin_ws```请自行替换为自己的工作空间名称。例如，对一个路径为```~/zhangsan_workspace```的工作空间来说，先将 [sim_env.sh](/sim_env.sh) 中的内容替换为如下所示的内容：
 ```
 #!/bin/bash
 sudo cp -r ./apriltag ~/.gazebo/models
@@ -56,16 +60,23 @@ pip install pygame
 ```
 如果键盘控制节点无法运行，请检查 [files](/files) 的位置，确保 [files](/files) 被正确放置在```工作空间根目录```中，例如 ```/home/zhangsan/zhangsan_workspace```。
 
-## 启动仿真
-### ```仿真界面展示```
-启动仿真前，请确保启动脚本 [start_simulation.sh](/start_simulation.sh) 的位置在工作空间目录下，例如 ```/home/zhangsan/zhangsan_workspace```。```注意```：脚本文件中首先通过 [env_simulation.launch](/cicr2023_simulator/uav_simulation/launch/env_simulation.launch) 加载了```随机地图```，再通过 [uav_simulation.launch](/cicr2023_simulator//uav_simulation/launch/uav_simulation.launch) 加载了```仿真无人机```，请确保二者在脚本中的顺序不被颠倒，否则可能会出现随机地图无法刷新的情况。
+
+# 2. 运行仿真
+
+## 仿真界面展示
+启动仿真前，请确保启动脚本 [start_simulation.sh](/start_simulation.sh) 的位置在工作空间目录下，例如 ```/home/zhangsan/zhangsan_workspace```。
+
 ```
 ./start_simulation.sh
 ```
 在脚本加载完成后，参赛者将会看见如下仿真界面：
 
 ![control_demo](/files/control_demo.png)
-### ```仿真文件说明```
+
+```注意```：脚本文件中首先通过 [env_simulation.launch](/cicr2023_simulator/uav_simulation/launch/env_simulation.launch) 加载了```随机地图```，再通过 [uav_simulation.launch](/cicr2023_simulator//uav_simulation/launch/uav_simulation.launch) 加载了```仿真无人机```，请确保二者在脚本中的顺序不被颠倒，否则可能会出现随机地图无法刷新的情况。
+
+## 文件说明
+
 启动脚本中打开的 [referee_system.launch](/cicr2023_simulator/uav_simulation/launch/referee_system.launch)为官方的打分系统，打分系统的触发方式为在```Rviz```中使用```2D Nav Goal```选取目标点：
 
 ![rviz](/files/rviz.png)
