@@ -12,15 +12,19 @@
 
 # 目录
 
-  - [1. 安装说明 ](#1-安装说明)
-  - [2. 运行仿真](#2-运行仿真)
-  - [3. 技术细节说明](#3-技术细节说明)
-  - [4. 代码提交规范](#4-代码提交规范)
-  - [5. 已知问题](#5-已知问题)
+  [1. 安装说明 ](#1-安装说明)
+
+  [2. 运行仿真](#2-运行仿真)
+
+  [3. 技术细节说明](#3-技术细节说明)
+
+  [4. 代码提交规范](#4-代码提交规范)
+
+  [5. 已知问题](#5-已知问题)
 
 # 1. 安装说明
 
-在开始安装依赖前，请确保当前系统已经安装了 **ROS**。如果还未安装 **ROS**，请先安装 [ROS Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu) 或 [ROS Noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)。
+在开始安装依赖前，请确保当前系统已经安装了 **ROS**。如果还未安装 **ROS**，请先安装 [ROS Melodic(Ubuntu18.04)](http://wiki.ros.org/melodic/Installation/Ubuntu) 或 [ROS Noetic(Ubuntu20.04)](http://wiki.ros.org/noetic/Installation/Ubuntu)。
 
 ## 1.1 仿真器依赖安装
 对于 Ubuntu18.04：
@@ -76,14 +80,57 @@ cd CICRSIM/
 ## 2.2 启动脚本功能说明
 |文件名称|功能描述|
 |:-|:-|
-|[keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py)|官方提供的接盘控制节点示例，参赛选手可参考其中控制无人机的方法，根据官方预留的控制接口发布相关话题来开发自己的无人机控制器|
-|[command_process.py](/cicr2023_simulator/uav_simulation/src/command_process.py)|控制器话题接收端，此文件不允许参赛选手进行改动|
+|[keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py)|键盘控制无人机节点|
+|[command_process.py](/cicr2023_simulator/uav_simulation/src/command_process.py)|控制器话题接收端|
 |[env_simulation.launch](/cicr2023_simulator/uav_simulation/launch/env_simulation.launch)|加载仿真环境，并刷新随机障碍物和二维码|
 |[uav_simulation.launch](/cicr2023_simulator//uav_simulation/launch/uav_simulation.launch)|加载仿真无人机|
-|[referee_system.launch](/cicr2023_simulator/uav_simulation/launch/referee_system.launch)|裁判系统，在参赛者触发比赛标志位后，无人机方能离开地面进行探索，系统开始倒计时并计算当前得分|
+|[referee_system.launch](/cicr2023_simulator/uav_simulation/launch/referee_system.launch)|裁判系统|
+
+**注意**：参赛选手不允许修改启动脚本中的官方文件
 
 # 3. 技术细节说明
-## 3.1 如何无人机控制接口控制无人机
+
+## 3.1 相关话题说明
+仿真无人机上默认搭载了一个RealSense深度相机，参赛选手可获取相机的相关话题以及无人机的里程计、IMU等话题，具体说明如下：
+### 3.1.1 传感器话题
+|名称|类型|描述|
+|:-|:-|:-|
+|`/ardrone/ground_truth/odometry`|`nav_msgs/Odometry`|里程计数据，包括无人机的位置、姿态和速度信息|
+|`/ardrone/ground_truth/imu`|`sensor_msgs/Imu`|IMU传感器数据，包括无人机的姿态、速度和加速度信息，由IMU收集|
+|`/camera/color/camera_info`|`sensor_msgs/CameraInfo`|RGB相机内参信息|
+|`/camera/color/image_raw`|`sensor_msgs/Image`|RGB彩色图像数据，从深度相机中获取|
+|`/camera/depth/camera_info`|`sensor_msgs/CameraInfo`|深度相机信息|
+|`/camera/depth/image_raw`|`sensor_msgs/Image`|深度图像数据|
+|`/velodyne_points`|`sensor_msgs/PointCloud2`|雷达点云数据|
+
+参赛选手可任意使用仿真相机或仿真激光雷达对环境进行感知，但不能更改除了安装位置以外的任何参数。
+
+### 3.1.2 其他接口话题
+|名称|类型|描述|
+|:-|:-|:-|
+|`/position_control`|`nav_msgs/Odometry`|官方控制接口，可发布无人机的位置、姿态、速度信息来控制无人机|
+|`/start_flag`|`std_msgs/Bool`|裁判系统触发接口，发布对应的消息以开始计时与计算选手当前得分|
+|`/apriltag_detection`|`referee_msgs/Apriltag_info`|裁判系统二维码坐标接收接口|
+## 3.2 传感器话题获取
+下面给出一段示例代码，说明如何获取相机的深度数据：
+```
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
+ void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg)
+{
+    // 处理深度图像消息
+}
+ int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "depth_image_subscriber");
+    ros::NodeHandle nh;
+    ros::Subscriber sub = nh.subscribe<sensor_msgs::Image>("/camera/depth/image_raw", 1, depthImageCallback);
+    ros::spin();
+}
+```
+
+## 3.3 无人机控制接口
+参赛选手应根据官方预留的控制接口发布相关话题来开发自己的无人机控制器，具体实现如下：
 ```
 话题名称：/position_control
 数据类型：nav_msgs/Odometry
@@ -112,44 +159,31 @@ model_odom_pub.publish(odom)
 ```
 **提示：** 可参考 [keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py) 中控制无人机的方法进行实现
 
-## 3.2 相关话题说明
-仿真无人机上默认搭载了一个RealSense深度相机，参赛选手可获取相机的相关话题以及无人机的里程计、IMU等话题，具体说明如下：
-### 3.2.1 传感器话题
-|名称|类型|描述|
-|:-|:-|:-|
-|`/ardrone/ground_truth/odometry`|`nav_msgs/Odometry`|里程计数据，包括无人机的位置、姿态和速度信息|
-|`/ardrone/ground_truth/imu`|`sensor_msgs/Imu`|IMU传感器数据，包括无人机的姿态、速度和加速度信息，由IMU收集|
-|`/camera/color/camera_info`|`sensor_msgs/CameraInfo`|RGB相机内参信息|
-|`/camera/color/image_raw`|`sensor_msgs/Image`|RGB彩色图像数据，从深度相机中获取|
-|`/camera/depth/camera_info`|`sensor_msgs/CameraInfo`|深度相机信息|
-|`/camera/depth/image_raw`|`sensor_msgs/Image`|深度图像数据|
-
-若需要修改深度相机相关话题，可在 [_d435.gazebo.xacro](/cicr2023_simulator/uav_gazebo/urdf/_d435.gazebo.xacro)中修改；若需要激光雷达等传感器，请参赛选手自行添加。
-
-### 3.2.2 其他接口话题
-|名称|类型|描述|
-|:-|:-|:-|
-|`/position_control`|`nav_msgs/Odometry`|官方控制接口，可发布无人机的位置、姿态、速度信息来控制无人机|
-|`/start_flag`|`std_msgs/Bool.h`|裁判系统触发接口，发布对应的消息以开始计时与计算选手当前得分
-
-### 3.2.3 传感器话题获取示例
-下面给出一段示例代码，说明如何获取相机的深度数据：
+## 3.4 二维码发布规范
+下面给出一段示例代码，说明如何发布二维码坐标：
 ```
 #include <ros/ros.h>
-#include <sensor_msgs/Image.h>
- void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg)
+#include <referee_msgs/Apriltag_info.h>
+ros::Publisher tag_pub;
+void tagPub()
 {
-    // 处理深度图像消息
+    referee_msgs::Apriltag_info msg;
+    msg.tag_num = 0;
+    msg.tag_pos_x = 5.05;
+    msg.tag_pos_y = 1.85;
+    msg.tag_pos_z = 1.2;
+    tag_pub.publish(msg);
 }
- int main(int argc, char** argv)
+int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "depth_image_subscriber");
+    ros::init(argc, argv, "tag_Publish");
     ros::NodeHandle nh;
-    ros::Subscriber sub = nh.subscribe<sensor_msgs::Image>("/camera/depth/image_raw", 1, depthImageCallback);
-    ros::spin();
+    tag_pub = nh.advertise<referee_msgs::Apriltag_info>("/apriltag_detection",10);
+    tagPub();
 }
 ```
-## 3.3 裁判系统
+这段代码发布了 **0** 号二维码的坐标，请各位参赛选手参照这段示例代码进行二维码消息发布
+## 3.5 裁判系统
 比赛开始前，参赛选手需要先启动官方裁判系统，在裁判系统启动后，参赛选手的无人机才能获得允许离开地面。裁判系统的启动方式为参赛选手根据裁判系统触发接口发布对应的话题作为启动信号，具体实现示例如下：
 ```
 #include <ros/ros.h>
@@ -174,22 +208,26 @@ int main(int argc, char** argv)
 
 ![referee_system](/files/referee_system.png)
 
-# 4. 代码提交规范
+在倒计时结束或接收到参赛选手发布的所有二维码坐标后，裁判系统会自动关闭，比赛结束。
+
+# 4. 代码及文件提交规范
 ## 4.1 提交文件命名规范与功能说明
 在最终提交代码时，参赛选手需要提交的文件有：
 
 |文件名称|文件属性|功能描述|
 |:-|:-|:-|
-|`sysu_planner`|文件夹|实现无人机自主探索的算法部分|
-|`sysu_controller`|文件夹|无人机控制器部分，通过官方提供的控制接口实现对无人机的控制|
-|`sysu_simulation.sh`|脚本文件|能够一键运行仿真和实现自主探索功能的脚本|
-|`sysu_report.pdf`|说明文档|说明提交代码的逻辑结构，是否需要配置其他环境等|
+|`planner`|ros package|实现无人机自主探索的算法部分|
+|`controller`|ros package|无人机控制器部分，通过官方提供的控制接口实现对无人机的控制|
+|`planner_dependency`|文件夹|存放除了 `planner` 以外的ros package|
+|`exploration.launch`|launch文件|启动所有自主探索相关的算法|
+|`report.pdf`|说明文档|说明提交代码的逻辑结构；比赛结束后，一张包含gazebo、rviz和裁判系统终端的截图；官方核实选手代码时需要知道的注意事项等|
 
-其中，文件夹的命名规范为 **队名_planner/controller**，脚本文件的命名规范为 **队名_simulation.sh**，说明文档的命名规范为 **队名_report.pdf**。
+请各位参赛选手将 `exploration.launch` 放在 `planner` 的 `launch` 目录下，具体路径为 `planner/launch`。此外，在最终提交压缩包时，请将上述文件依次放入压缩包并将压缩包命名为 **队名.zip**。
 
-## 4.2 具体要求说明
-### 4.2.1 脚本文件
-参赛选手最终提交的脚本文件的编写方式请参考 [start_simulation.sh](/start_simulation.sh)，示例如下：
+**注意**：未按照规范提交代码及文件的参赛队伍将会被扣除一定分数。
+
+## 4.2 官方代码核实流程
+在各位参赛选手提交代码后，官方将下载本仓库的官方代码和选手提交的代码。官方代码和选手提交的代码会被放置在工作空间的 **src** 目录下，按照如下顺序进行代码测试：
 ```
 #!/bin/bash
 gnome-terminal -t "roscore" -x bash -c "roscore;exec bash;"
@@ -202,13 +240,16 @@ gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch
 sleep 3s
 
 gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch uav_simulation referee_system.launch;exec bash;"
-sleep 2s
+sleep 3s
 
 gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch sysu_planner exploration.launch;exec bash;"
-sleep 2s
 ```
-### 4.2.2 说明文档
-参赛选手最终提交的说明文档中需要说明提交代码的逻辑结构，技术创新点，是否需要配置其他环境等内容。
+清各位参赛选手在提交代码前按照该顺序进行代码测试。确保代码能够准确无误的运行。每位参赛选手的代码将会进行三次测试，最终的成绩取三次测试成绩的中位数。
+
+下面给出官方测试平台的相关参数：
+| CPU        | RAM     | GPU     |
+| :----------------------: | :----------------------: | :----------------------: |
+| i7-13700F | 32GB | RTX3060 |
 
 # 5. 已知问题
 
