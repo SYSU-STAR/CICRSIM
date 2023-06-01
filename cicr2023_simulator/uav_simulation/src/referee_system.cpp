@@ -7,6 +7,7 @@
 #include <std_msgs/Bool.h>
 #include <iostream>
 using namespace std;
+ros::Publisher take_off_flag_pub;
 ros::Subscriber rcv_start_flag, rcv_tag_info;
 ros::ServiceClient client;
 int tags_num = 8;
@@ -14,7 +15,7 @@ int minutes = 3;
 int seconds = 0; 
 int total_score;
 bool start_flag = false;
-double detect_error = 0.03;//3cm
+double detect_error = 0.03;
 bool finish_detection = false;
 gazebo_msgs::ModelState model_pose, last_model_pose;
 vector<geometry_msgs::PoseStamped>real_apriltag_pose(tags_num);
@@ -29,6 +30,7 @@ void ApriltagInfo()
     {
         apriltag[i].request.model_name= apriltag_names[i];
         apriltag[i].request.relative_entity_name = "world";
+        // ROS_INFO("Tag_Name: %s Pos_x: %d Pos_y: %d Pos_z: %d",apriltag[i].request.model_name,apriltag[i].response.pose.position.x,apriltag[i].response.pose.position.y,apriltag[i].response.pose.position.z );
         if(client.call(apriltag[i]))
         {
             real_apriltag_pose[i].pose.position.x = apriltag[i].response.pose.position.x;
@@ -40,7 +42,19 @@ void ApriltagInfo()
 void Time_Count(const std_msgs::Bool::ConstPtr& msg)
 {
     if(msg->data)
+    {
         start_flag = true;
+    }
+
+}
+void takeoffPub()
+{
+    std_msgs::Bool take_off_flag;
+    if(start_flag)
+    {
+        take_off_flag.data = true;
+    }
+    take_off_flag_pub.publish(take_off_flag);
 }
 void ApriltaginfoCallBack(const referee_msgs::Apriltag_info& msg)
 {
@@ -124,6 +138,7 @@ int main(int argc, char** argv)
     ros::NodeHandle nh( "~" );
     rcv_start_flag = nh.subscribe("/start_flag", 10, Time_Count);
     rcv_tag_info = nh.subscribe("/apriltag_detection", 10, ApriltaginfoCallBack);
+    take_off_flag_pub = nh.advertise<std_msgs::Bool>("/take_off",10);
     ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
     client = nh.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
     ROS_WARN("Referee system Load Sucessfully!");
@@ -137,6 +152,7 @@ int main(int argc, char** argv)
     {
         OdomInfo();
         ApriltagInfo();
+        takeoffPub();
         Score();
         ros::spinOnce();
         rate.sleep();
