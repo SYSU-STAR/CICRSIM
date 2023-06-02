@@ -2,7 +2,7 @@
 
 ![cicr](files/cicr.png)
 
-中山大学人工智能学院承办的第一届逸仙勇士杯协同机器人大赛现已启动。本仓库致力于为参与**仿真赛**项目的开发者提供关键仿真环境和代码接口。
+中山大学人工智能学院承办的[第一届逸仙勇士杯协同机器人大赛](http://yxysrobot.com/)现已启动。本仓库致力于为参与**仿真赛**项目的开发者提供关键仿真环境和代码接口。
 
 仿真赛的主要任务内容是：复杂场景中存在多个位置未知的目标二维码和随机障碍物，无人机需要实时感知环境和规划运动，尽快搜索到目标二维码并准确报告其位置坐标，发现目标越多，用时越短者获得更高的排名。比赛中，参赛队需要为无人机开发**环境感知**以及**路径规划**算法，控制无人机自主探索未知环境，寻找目标。
 
@@ -91,7 +91,7 @@ cd CICRSIM/
 # 3. 技术细节说明
 
 ## 3.1 相关话题说明
-仿真无人机上默认搭载了一个RealSense深度相机，参赛选手可获取相机的相关话题以及无人机的里程计、IMU等话题，具体说明如下：
+仿真无人机上默认搭载了一个深度相机和一个激光雷达，参赛选手可获取相机、雷达的相关话题以及无人机的里程计、IMU等话题，具体说明如下：
 ### 3.1.1 传感器话题
 |名称|类型|描述|
 |:-|:-|:-|
@@ -184,7 +184,7 @@ int main(int argc, char** argv)
 ```
 这段代码发布了 **0** 号二维码的坐标，请各位参赛选手参照这段示例代码进行二维码消息发布
 ## 3.5 裁判系统
-比赛开始前，参赛选手需要先启动官方裁判系统，在裁判系统启动后，参赛选手的无人机才能获得允许离开地面。裁判系统的启动方式为参赛选手根据裁判系统触发接口发布对应的话题作为启动信号，具体实现示例如下：
+比赛开始前，参赛选手的无人机应该在起飞区上方悬停。参赛选手需要先启动官方裁判系统，在裁判系统启动后，参赛选手的无人机才能开始自主探索。裁判系统的启动方式为参赛选手根据裁判系统触发接口发布对应的话题作为启动信号，具体实现示例如下：
 ```
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
@@ -218,31 +218,20 @@ int main(int argc, char** argv)
 |:-|:-|:-|
 |`planner`|ros package|实现无人机自主探索的算法部分|
 |`controller`|ros package|无人机控制器部分，通过官方提供的控制接口实现对无人机的控制|
-|`planner_dependency`|文件夹|存放除了 `planner` 以外的ros package|
+|`planner_dependency`|文件夹|存放除了 `planner` 和 `controller` 以外的ros package|
 |`exploration.launch`|launch文件|启动所有自主探索相关的算法|
+|`video.mp4`|视频文件|记录gazebo的搜索全过程|
 |`report.pdf`|说明文档|说明提交代码的逻辑结构；比赛结束后，一张包含gazebo、rviz和裁判系统终端的截图；官方核实选手代码时需要知道的注意事项等|
 
-请各位参赛选手将 `exploration.launch` 放在 `planner` 的 `launch` 目录下，具体路径为 `planner/launch`。此外，在最终提交压缩包时，请将上述文件依次放入压缩包并将压缩包命名为 **队名.zip**。
+请各位参赛选手将 `exploration.launch` 放在 `planner` 的 `launch` 目录下，具体路径为 `planner/launch`；说明文档页数不得超过**5页**，rviz截图需要包含搜索过程的**完整路径**；在最终提交压缩包时，请将上述文件依次放入压缩包并将压缩包命名为 **队名.zip**，总大小不超过**20M**。
 
-**注意**：未按照规范提交代码及文件的参赛队伍将会被扣除一定分数。
+**注意**：未按照规范提交代码及文件的参赛队伍将会被扣除一定分数，如果提交的 `exploration.launch`不能运行，则不得分。
 
 ## 4.2 官方代码核实流程
 在各位参赛选手提交代码后，官方将下载本仓库的官方代码和选手提交的代码。官方代码和选手提交的代码会被放置在工作空间的 **src** 目录下，按照如下顺序进行代码测试：
 ```
-#!/bin/bash
-gnome-terminal -t "roscore" -x bash -c "roscore;exec bash;"
-sleep 5s
-
-gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch uav_simulation env_simulation.launch;exec bash;"
-sleep 5s
-
-gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch uav_simulation uav_simulation.launch;exec bash;"
-sleep 3s
-
-gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch uav_simulation referee_system.launch;exec bash;"
-sleep 3s
-
-gnome-terminal -t "uav_simulation" -x bash -c "source devel/setup.bash;roslaunch sysu_planner exploration.launch;exec bash;"
+./start_simulation.sh
+source devel/setup.bash && roslaunch planner exploration.launch
 ```
 清各位参赛选手在提交代码前按照该顺序进行代码测试。确保代码能够准确无误的运行。每位参赛选手的代码将会进行三次测试，最终的成绩取三次测试成绩的中位数。
 

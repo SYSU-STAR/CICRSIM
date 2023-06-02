@@ -67,7 +67,7 @@ def main():
     global take_off_flag
     rospy.init_node('command_process')
     rospy.Subscriber('/position_control',Odometry,odomMSGCallBack)
-    rospy.Subscriber('take_off',Bool,takeoffMSGCallBack)
+    rospy.Subscriber('/start_flag',Bool,takeoffMSGCallBack)
     rospy.logwarn("command_process Load Sucessfully")
     rospy.spin()
     

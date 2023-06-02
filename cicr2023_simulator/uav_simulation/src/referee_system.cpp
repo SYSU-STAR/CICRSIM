@@ -7,7 +7,6 @@
 #include <std_msgs/Bool.h>
 #include <iostream>
 using namespace std;
-ros::Publisher take_off_flag_pub;
 ros::Subscriber rcv_start_flag, rcv_tag_info;
 ros::ServiceClient client;
 int tags_num = 8;
@@ -46,15 +45,6 @@ void Time_Count(const std_msgs::Bool::ConstPtr& msg)
         start_flag = true;
     }
 
-}
-void takeoffPub()
-{
-    std_msgs::Bool take_off_flag;
-    if(start_flag)
-    {
-        take_off_flag.data = true;
-    }
-    take_off_flag_pub.publish(take_off_flag);
 }
 void ApriltaginfoCallBack(const referee_msgs::Apriltag_info& msg)
 {
@@ -138,7 +128,6 @@ int main(int argc, char** argv)
     ros::NodeHandle nh( "~" );
     rcv_start_flag = nh.subscribe("/start_flag", 10, Time_Count);
     rcv_tag_info = nh.subscribe("/apriltag_detection", 10, ApriltaginfoCallBack);
-    take_off_flag_pub = nh.advertise<std_msgs::Bool>("/take_off",10);
     ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
     client = nh.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
     ROS_WARN("Referee system Load Sucessfully!");
@@ -152,7 +141,6 @@ int main(int argc, char** argv)
     {
         OdomInfo();
         ApriltagInfo();
-        takeoffPub();
         Score();
         ros::spinOnce();
         rate.sleep();
