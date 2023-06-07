@@ -10,11 +10,7 @@ pub_pose_msg = ModelState()
 pub_pose_msg.model_name = 'ardrone'
 pub_pose_msg.reference_frame = 'world'
 model_control_pub = rospy.Publisher('/gazebo/set_model_state', ModelState, queue_size=10)
-take_off_flag = False
-def takeoffMSGCallBack(msg):
-    global take_off_flag
-    if(msg.data):
-        take_off_flag = True
+
 def odomMSGCallBack(msg):
     odom_sub.pose.pose.position.x = msg.pose.pose.position.x
     odom_sub.pose.pose.position.y = msg.pose.pose.position.y
@@ -60,14 +56,12 @@ def odomMSGCallBack(msg):
     pub_pose_msg.twist.angular.y = odom_sub.twist.twist.angular.y
     pub_pose_msg.twist.angular.z = odom_sub.twist.twist.angular.z
 
-    if(take_off_flag):
-        model_control_pub.publish(pub_pose_msg)
+    model_control_pub.publish(pub_pose_msg)
 
 def main():
     global take_off_flag
     rospy.init_node('command_process')
     rospy.Subscriber('/position_control',Odometry,odomMSGCallBack)
-    rospy.Subscriber('/start_flag',Bool,takeoffMSGCallBack)
     rospy.logwarn("command_process Load Sucessfully")
     rospy.spin()
     

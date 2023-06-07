@@ -110,6 +110,7 @@ if (NOT NO_ROS)
     mav_msgs
     rosbag
     roscpp
+    rotors_comm
     std_srvs
     tf
   )
@@ -225,7 +226,7 @@ if (NOT NO_ROS)
     catkin_package(
       INCLUDE_DIRS include ${Eigen_INCLUDE_DIRS}
       LIBRARIES rotors_gazebo_motor_model rotors_gazebo_controller_interface
-      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs rosbag roscpp gazebo_plugins std_srvs tf
+      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs rosbag roscpp gazebo_plugins rotors_comm std_srvs tf
       DEPENDS Eigen OpenCV
       #CFG_EXTRAS rotors_gazebo_plugins.cmake
     )
@@ -234,7 +235,7 @@ if (NOT NO_ROS)
     catkin_package(
       INCLUDE_DIRS include ${Eigen_INCLUDE_DIRS}
       LIBRARIES rotors_gazebo_motor_model rotors_gazebo_controller_interface
-      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs rosbag roscpp gazebo_plugins std_srvs tf
+      CATKIN_DEPENDS cv_bridge geometry_msgs mav_msgs rosbag roscpp gazebo_plugins rotors_comm std_srvs tf
       DEPENDS Eigen OpenCV
       #CFG_EXTRAS rotors_gazebo_plugins.cmake
     )
@@ -494,12 +495,12 @@ list(APPEND targets_to_install rotors_gazebo_pressure_plugin)
 
 #===================================== ROS INTERFACE PLUGIN =====================================//
 # This entire plugin is only built if ROS is a dependency
-# if (NOT NO_ROS)
-#   add_library(rotors_gazebo_ros_interface_plugin SHARED src/gazebo_ros_interface_plugin.cpp)
-#   target_link_libraries(rotors_gazebo_ros_interface_plugin ${target_linking_LIBRARIES} )
-#   add_dependencies(rotors_gazebo_ros_interface_plugin ${catkin_EXPORTED_TARGETS})
-#   list(APPEND targets_to_install rotors_gazebo_ros_interface_plugin)
-# endif()
+if (NOT NO_ROS)
+  add_library(rotors_gazebo_ros_interface_plugin SHARED src/gazebo_ros_interface_plugin.cpp)
+  target_link_libraries(rotors_gazebo_ros_interface_plugin ${target_linking_LIBRARIES} )
+  add_dependencies(rotors_gazebo_ros_interface_plugin ${catkin_EXPORTED_TARGETS})
+  list(APPEND targets_to_install rotors_gazebo_ros_interface_plugin)
+endif()
 
 #========================================= WIND PLUGIN ==========================================//
 add_library(rotors_gazebo_wind_plugin SHARED src/gazebo_wind_plugin.cpp)
