@@ -52,8 +52,8 @@ sudo chmod +x sim_env.sh start_simulation.sh
 参赛选手根据 [sim_env.sh](/sim_env.sh) 配置仿真环境，脚本中的 ```YOUR_WORKSPACE_PATH``` 请自行替换为自己的工作空间名称。例如，对一个路径为 ```~/zhangsan_workspace``` 的工作空间来说，先将 [sim_env.sh](/sim_env.sh) 中的内容替换为如下所示的内容：
 ```
 #!/bin/bash
-sudo cp -r ./apriltag ~/.gazebo/models
-sudo unzip ./models.zip -d ~/.gazebo/models
+sudo cp -r ./apriltag ~/.gazebo/models/apriltag
+sudo unzip ./models.zip -d ~/.gazebo
 sudo cp -r ./files ~/zhangsan_workspace
 sudo cp -r ./start_simulation.sh ~/zhangsan_workspace
 ```
