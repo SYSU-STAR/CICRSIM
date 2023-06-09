@@ -91,7 +91,7 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <model name='20230316'>
-      <pose frame=''>0.941917 -0.436193 0 0 -0 0</pose>
+      <pose frame=''>0 -0 0 0 -0 0</pose>
       <link name='Wall_14'>
         <collision name='Wall_14_Collision'>
           <geometry>
