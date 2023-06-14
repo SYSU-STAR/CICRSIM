@@ -159,7 +159,15 @@ model_odom_pub.publish(odom)
 ```
 **提示：** 可参考 [keyboard_control.py](/cicr2023_simulator/uav_simulation/src/keyboard_control.py) 中控制无人机的方法进行实现
 
-## 3.4 二维码发布规范
+## 3.4 二维码
+### 3.4.1 二维码细节说明
+本次比赛所采用的二维码为 **tag36h11** 系列的二维码，其尺寸大小如下图所示：
+
+<p align="center">
+  <img src="files/tag_size.png">
+</p>
+
+### 3.4.2 二维码发布示例
 下面给出一段示例代码，说明如何发布二维码坐标：
 ```
 #include <ros/ros.h>
