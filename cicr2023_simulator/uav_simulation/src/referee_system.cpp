@@ -14,7 +14,7 @@ int minutes = 3;
 int seconds = 0; 
 int total_score;
 bool start_flag = false;
-double detect_error = 0.03;
+double detect_error = 0.10;
 bool finish_detection = false;
 gazebo_msgs::ModelState model_pose, last_model_pose;
 vector<geometry_msgs::PoseStamped>real_apriltag_pose(tags_num);
