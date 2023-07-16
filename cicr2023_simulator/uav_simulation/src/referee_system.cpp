@@ -111,24 +111,13 @@ void OdomInfo()
         model_pose.pose.position.z = uav.response.pose.position.z;
     }
 }
-void positionCheck(const ros::TimerEvent& event)
-{
-    double distance = sqrt(pow(model_pose.pose.position.x-last_model_pose.pose.position.x,2)+pow(model_pose.pose.position.y-last_model_pose.pose.position.y,2)+pow(model_pose.pose.position.z-last_model_pose.pose.position.z,2));
-    if(distance>8.0)
-    {
-        ROS_INFO("TOO FAST, CHEATING!!!");
-    }
-    last_model_pose.pose.position.x = model_pose.pose.position.x;
-    last_model_pose.pose.position.y = model_pose.pose.position.y;
-    last_model_pose.pose.position.z = model_pose.pose.position.z;
-}
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "referee_system");
     ros::NodeHandle nh( "~" );
     rcv_start_flag = nh.subscribe("/start_flag", 10, Time_Count);
     rcv_tag_info = nh.subscribe("/apriltag_detection", 10, ApriltaginfoCallBack);
-    ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
+    // ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
     client = nh.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
     ROS_WARN("Referee system Load Sucessfully!");
 
