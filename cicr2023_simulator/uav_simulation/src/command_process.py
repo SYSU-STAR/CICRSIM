@@ -16,18 +16,31 @@ model_control_pub = rospy.Publisher('/gazebo/set_model_state', ModelState, queue
 v_last_x = 0.0
 v_last_y = 0.0
 v_last_z = 0.0
+w_last_x = 0.0
+w_last_y = 0.0
+w_last_z = 0.0
 acc_x = 0.0
 acc_y = 0.0
 acc_z = 0.0
+acc_w_x=0.0
+acc_w_y=0.0
+acc_w_z=0.0
 
 def odomMSGCallBack(msg):
     global t_last
     global v_last_x
     global v_last_y
     global v_last_z
+    global w_last_x
+    global w_last_y
+    global w_last_z
     global acc_x
     global acc_y
     global acc_z
+    global acc_w_x
+    global acc_w_y
+    global acc_w_z
+
     odom_sub.pose.pose.position.x = msg.pose.pose.position.x
     odom_sub.pose.pose.position.y = msg.pose.pose.position.y
     odom_sub.pose.pose.position.z = msg.pose.pose.position.z
@@ -61,12 +74,17 @@ def odomMSGCallBack(msg):
     v_now_x = odom_sub.twist.twist.linear.x
     v_now_y = odom_sub.twist.twist.linear.y
     v_now_z = odom_sub.twist.twist.linear.z
+    w_now_x = odom_sub.twist.twist.angular.x
+    w_now_y = odom_sub.twist.twist.angular.y
+    w_now_z = odom_sub.twist.twist.angular.z
 
     if dt > 0:
         acc_x = (v_now_x - v_last_x) / dt
         acc_y = (v_now_y - v_last_y) / dt
         acc_z = (v_now_z - v_last_z) / dt
-
+        acc_w_x = (w_now_x - w_last_x) / dt
+        acc_w_y = (w_now_y - w_last_y) / dt
+        acc_w_z = (w_now_z - w_last_z) / dt
 
 
     total_acc = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
@@ -85,9 +103,15 @@ def odomMSGCallBack(msg):
         v_now_y *= 3.0 / total_vel
         v_now_z *= 3.0 / total_vel
 
-    w_now_x = odom_sub.twist.twist.angular.x
-    w_now_y = odom_sub.twist.twist.angular.y
-    w_now_z = odom_sub.twist.twist.angular.z
+    total_w_acc = math.sqrt(acc_w_x**2 + acc_w_y**2 + acc_w_z**2)
+    if total_w_acc > 2.0:
+        acc_w_x *= 2.0 / total_w_acc
+        acc_w_y *= 2.0 / total_w_acc
+        acc_w_z *= 2.0 / total_w_acc
+
+    w_now_x = w_last_x + acc_w_x * dt
+    w_now_y = w_last_y + acc_w_y * dt
+    w_now_z = w_last_z + acc_w_z * dt
 
     total_w = math.sqrt(w_now_x**2 + w_now_y**2 + w_now_z**2)
     if total_w > 1.0:
@@ -99,7 +123,9 @@ def odomMSGCallBack(msg):
     v_last_x = v_now_x
     v_last_y = v_now_y
     v_last_z = v_now_z
-
+    w_last_x = w_now_x
+    w_last_y = w_now_y
+    w_last_z = w_now_z
 
 
     pub_pose_msg.twist.linear.x = v_now_x
@@ -119,7 +145,7 @@ def main():
     rospy.Subscriber('/position_control',Odometry,odomMSGCallBack)
     global t_last
     t_last = rospy.Time.now()
-    rospy.logwarn("command_process Load111 Sucessfully")
+    rospy.logwarn("command_process Load Sucessfully")
     rospy.spin()
     
 if __name__ == '__main__':
