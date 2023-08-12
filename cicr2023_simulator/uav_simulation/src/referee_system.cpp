@@ -6,6 +6,7 @@
 #include "referee_msgs/Apriltag_info.h"
 #include <std_msgs/Bool.h>
 #include <iostream>
+#include <fstream>
 using namespace std;
 ros::Subscriber rcv_start_flag, rcv_tag_info;
 ros::ServiceClient client;
@@ -21,6 +22,7 @@ vector<geometry_msgs::PoseStamped>real_apriltag_pose(tags_num);
 vector<geometry_msgs::PoseStamped>player_apriltag_pose(tags_num);
 vector<bool>tag_flag = {false,false,false,false,false,false,false,false};
 vector<int>tag_score = {0,0,0,0,0,0,0,0};
+ros::Time start_time, end_time;
 void ApriltagInfo()
 {
     vector<gazebo_msgs::GetModelState> apriltag(tags_num);
@@ -29,7 +31,6 @@ void ApriltagInfo()
     {
         apriltag[i].request.model_name= apriltag_names[i];
         apriltag[i].request.relative_entity_name = "world";
-        // ROS_INFO("Tag_Name: %s Pos_x: %d Pos_y: %d Pos_z: %d",apriltag[i].request.model_name,apriltag[i].response.pose.position.x,apriltag[i].response.pose.position.y,apriltag[i].response.pose.position.z );
         if(client.call(apriltag[i]))
         {
             real_apriltag_pose[i].pose.position.x = apriltag[i].response.pose.position.x;
@@ -43,6 +44,7 @@ void Time_Count(const std_msgs::Bool::ConstPtr& msg)
     if(msg->data)
     {
         start_flag = true;
+        start_time = ros::Time::now();
     }
 
 }
@@ -54,9 +56,10 @@ void ApriltaginfoCallBack(const referee_msgs::Apriltag_info& msg)
 }
 void Score()
 {
+    ros::Time time1 =  ros::Time::now();
     for(int i=0;i<tags_num;i++)
     {
-        if(player_apriltag_pose[i].pose.position.x!=0&&player_apriltag_pose[i].pose.position.y!=0&&player_apriltag_pose[i].pose.position.z!=0)
+        if(player_apriltag_pose[i].pose.position.x!=0 || player_apriltag_pose[i].pose.position.y!=0 || player_apriltag_pose[i].pose.position.z!=0)
         {
             tag_flag[i]=true;
         }
@@ -90,7 +93,9 @@ void Score()
         total_score=t;
         cout<<"Total Score: "<<total_score<<endl;
         cout<<"Remain Time: "<<minutes<<" min "<<seconds<< " sec"<<endl;
-        ros::Duration(1.0).sleep();
+        ros::Time time2 = ros::Time::now();
+        double time_b = (time2 - time1).toSec();
+        ros::Duration(1.0 - time_b).sleep();
         seconds--;
         if(seconds<0)
         {
@@ -117,15 +122,9 @@ int main(int argc, char** argv)
     ros::NodeHandle nh( "~" );
     rcv_start_flag = nh.subscribe("/start_flag", 10, Time_Count);
     rcv_tag_info = nh.subscribe("/apriltag_detection", 10, ApriltaginfoCallBack);
-    // ros::Timer position_check = nh.createTimer(ros::Duration(1.0),positionCheck);
     client = nh.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
     ROS_WARN("Referee system Load Sucessfully!");
-
-    nh.param("init_x", last_model_pose.pose.position.x, 8.5);
-    nh.param("init_y", last_model_pose.pose.position.y, 4.0);
-    nh.param("init_z", last_model_pose.pose.position.z, 0.0);
-    
-    ros::Rate rate(200);
+    ros::Rate rate(100);
     while(ros::ok()&&(minutes>=0&&seconds>=0)&&!finish_detection)
     {
         OdomInfo();
@@ -134,5 +133,4 @@ int main(int argc, char** argv)
         ros::spinOnce();
         rate.sleep();
     }
-
 }
